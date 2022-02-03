@@ -13,15 +13,23 @@
 const int FPS = 60;
 const int tool=1000;
 const int arz =720;
-char player1_name[20];
-char player2_name[20]="ArshiA";
-char player3_name[20]="parham";
-char player4_name[20]="parsa";
+char player1_name[20];//red
+char player2_name[20]="p2";//blue
+char player3_name[20]="p3";
+char player4_name[20]="p4";
 int scores[4][2];
  SDL_Window *sdlWindow;
  SDL_Renderer *sdlrenderer ;
+int choice=0;
 //***************************************************** functions and structs
-
+struct map{
+    int x;
+    int y;
+    int is_ghale;
+    int tedad_sol;
+    Uint32 color1;
+    Uint32 color2;
+};
 void remove_alone_pieces(int m,int xy[][m]){
     for(int i=0;i<7;++i){
         for(int j=0;j<m;++j){
@@ -74,46 +82,84 @@ void remove_alone_pieces(int m,int xy[][m]){
             }
         }
     }
-}////tike haye tanha ra hazf mikonad.
-void coordinate(int x[],int y[],int n,int xy[][n]){
+}
+void check(int kingx[],int kingy[],int n,int m,int xy[][m]){
+    for(int i=0;i<n;++i){
+        for(int j=0;j<m;++j){
+            if(xy[i][j]==0&&kingx[0]==j&&kingy[0]==i){
 
-    for(int j=0;j<9;++j){
-        x[j]=120+80*j;
-    }
-    for(int i=0;i<7;++i){
-        y[i]=120+80*i;
-    }
+                    kingx[0]=(kingx[0]+1)%9;
+                    kingy[0]=(kingy[0]+1)%7;
 
-}////mokhtasat markaz ha.
-void random_castles(int cx[],int cy[],int x[],int y[],int xy[][9]){
-    srand(time(0));
-    int rx[4];
-    int ry[4];
-    for(int i=0;i<4;++i){
-       int X=rand()%9;
-       int Y=rand()%7;
-        if(xy[Y][X]==0){
-            i--;
-        }
-        else{
-            rx[i]=x[X];
-            ry[i]=y[Y];
-        }
-    }
-    for(int i=1;i<4;++i){
-        for(int j=0;j<3;++j){
-            if(rx[j]==rx[j+1]&&ry[j]==ry[j+1]){
-                rx[j]=x[(rx[j]+3)%9];
-                ry[j]=x[(ry[j]+3)%7];
             }
+            else if(xy[i][j]==0&&kingx[1]==j&&kingy[1]==i){
 
+                    kingx[1]=(kingx[1]+1)%9;
+                    kingy[1]=(kingy[1]+1)%7;
+
+            }
+            else if(xy[i][j]==0&&kingx[2]==j&&kingy[2]==i){
+
+                    kingx[2]=(kingx[2]+1)%9;
+                    kingy[2]=(kingy[2]+1)%7;
+
+            }
+            else if(xy[i][j]==0&&kingx[3]==j&&kingy[3]==i){
+
+                    kingx[3]=(kingx[3]+1)%9;
+                    kingy[3]=(kingy[3]+1)%7;
+
+            }
         }
     }
     for(int i=0;i<4;++i){
-        cy[i]=ry[i];
-        cx[i]=rx[i];
+        for(int j=i+1;j<4;++j){
+            if(kingx[j]==kingx[j]&&kingy[j]==kingy[i]){
+                kingx[i]=(rand())%9;
+               kingy[i]=rand()%7;
+            }
+        }
     }
-}////mokhtasat ghale ha.
+
+}
+void ghale(int n,int m,int xy[][m],int count,struct map Map[]){
+    srand(time(0));
+int kingx[4]={rand()%9,rand()%9,rand()%9,rand()%9};
+int kingy[4]={rand()%7,rand()%7,rand()%7,rand()%7};
+check(kingx,kingy,7,9,xy);
+int k=0;
+for(int i=0;i<n;++i){
+       for(int j=0;j<m;++j){
+        if(xy[i][j]!=0){
+            Map[k].x=(j*80)+120;
+            Map[k].y=(i*80)+120;
+
+            if(kingx[0]==j&&kingy[0]==i) {
+                Map[k].is_ghale = 1;
+                Map[k].tedad_sol=10;
+            }
+           else if(kingx[1]==j&&kingy[1]==i) {
+                Map[k].is_ghale = 1;
+                Map[k].tedad_sol=10;
+            }
+           else if(kingx[2]==j&&kingy[2]==i) {
+                Map[k].is_ghale = 1;
+                Map[k].tedad_sol=10;
+            }
+           else if(kingx[3]==j&&kingy[3]==i) {
+                Map[k].is_ghale = 1;
+                Map[k].tedad_sol=10;
+            }
+        else {
+                Map[k].is_ghale = 0;
+                Map[k].tedad_sol = 0;
+            }
+        k++;
+        }
+       }
+   }
+
+}
 SDL_Texture *menuTexture(SDL_Renderer *sdlRenderer, char *image_path) {
     SDL_Surface *image = SDL_LoadBMP(image_path);
 
@@ -240,28 +286,13 @@ int menu(int *choice) {
 
     SDL_Delay(1000);
    // SDL_DestroyWindow(sdlWindow);
-    printf("\n Hello World\n");
+    printf("\n menu ok\n");
     //SDL_Quit();
 }
-void random_map_pieces(int n,int m,int randomxy[][m],int randomx[],int randomy[],int castlex[],int castley[]){
+void random_map_pieces(int n,int m,int randomxy[][m],int count,struct map Map[]){
     srand(time(0));
-////randomxy baraye noghat random ke bayad dayere dashte bashand ya na.
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            randomxy[i][j] = rand() % 5;
-        }
-    }
     remove_alone_pieces(m, randomxy);
-////randomx & randomy baray mokhtasat marakez.
-
-coordinate(randomx, randomy, n, randomxy);
-////mokhtasat random ghale ha.
-
-    random_castles(castlex, castley, randomx, randomy, randomxy);
-    for (int i = 0; i < 4; ++i) {
-        printf("x :%d   y :%d\n", castlex[i], castley[i]);
-    }
+    ghale(7,9,randomxy,count,Map);
 }
 int choosing_the_map(int *ch){
 
@@ -318,88 +349,69 @@ int choosing_the_map(int *ch){
     printf("\n Hello World\n");
    // SDL_Quit();
 }
-void specific_castles(int castlex[],int castley[],int x[],int y[],int xy[][9],int ch){
+void specific_castles(int castlex[],int castley[],int ch){
  if(ch==1){
-     castlex[0]=x[4];
-     castley[0]=y[2];
-     castlex[1]=x[8];
-     castley[1]=y[0];
-     castlex[2]=x[0];
-     castley[2]=y[6];
-     castlex[3]=x[8];
-     castley[3]=y[6];
+     castlex[0]=440;
+     castley[0]=280;
+     castlex[1]=760;
+     castley[1]=120;
+     castlex[2]=120;
+     castley[2]=600;
+     castlex[3]=600;
+     castley[3]=600;
  }
    else if(ch==2){
-     castlex[0]=x[1];
-     castley[0]=y[0];
-     castlex[1]=x[7];
-     castley[1]=y[0];
-     castlex[2]=x[0];
-     castley[2]=y[5];
-     castlex[3]=x[7];
-     castley[3]=y[5];
+     castlex[0]=200;
+     castley[0]=120;
+     castlex[1]=680;
+     castley[1]=120;
+     castlex[2]=120;
+     castley[2]=520;
+     castlex[3]=680;
+     castley[3]=520;
    }
    else if(ch==3){
-     castlex[0]=x[2];
-     castley[0]=y[3];
-     castlex[1]=x[3];
-     castley[1]=y[0];
-     castlex[2]=x[2];
-     castley[2]=y[6];
-     castlex[3]=x[8];
-     castley[3]=y[5];
+     castlex[0]=280;
+     castley[0]=360;
+     castlex[1]=360;
+     castley[1]=120;
+     castlex[2]=280;
+     castley[2]=600;
+     castlex[3]=760;
+     castley[3]=520;
    }
 }
-void specific_map(int n,int m,int xy[][m],int x[],int y[],int castlex[],int castley[],int ch){
-    srand(time(0));
-////randomxy baraye noghat random ke bayad dayere dashte bashand ya na.
-if(ch==1) {
-    for (int i = 0; i < 7; ++i) {
-        for (int j = 0; j < 9; ++j) {
-            if(i%4+j%3!=0&&i%4+j%3!=1)
-            xy[i][j] =1 ;
-            else
-                xy[i][j] =0 ;
+void specific_ghale(int n,int m,int xy[][m],int count,struct map Map[],int ch){
+  int castlex[4];
+  int castley[4];
+    specific_castles(castlex,castley,ch);
+    int k=0;
+    for(int i=0;i<n;++i){
+        for(int j=0;j<m;++j){
+            if(xy[i][j]!=0){
+                Map[k].x=j*80+120;
+                Map[k].y=i*80+120;
+                Map[k].tedad_sol=0;
+                if(castlex[0]==j*80+120&&castley[0]==i*80+120)
+                    Map[k].is_ghale=1;
+               else if(castlex[1]==j*80+120&&castley[1]==i*80+120)
+                    Map[k].is_ghale=1;
+               else if(castlex[2]==j*80+120&&castley[2]==i*80+120)
+                    Map[k].is_ghale=1;
+               else if(castlex[3]==j*80+120&&castley[3]==i*80+120)
+                    Map[k].is_ghale=1;
+                else
+                    Map[k].is_ghale=0;
+
+                k++;
+            }
         }
     }
 }
-
-else if(ch==2){
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            if(i%2+j%2!=0) {
-            xy[i][j]=1;
-        }
-            else{
-            xy[i][j]=0;
-            }
-        }
-        }
-    }
-
-else if(ch==3){
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            if(i%3+j%4!=0&&i%3+j%4!=1){
-                xy[i][j]=1;
-            }
-            else{
-                xy[i][j]=0;
-            }
-            }
-        }
-    }
+void specific_map(int n,int m,int xy[][m],int ch,int count,struct map Map[]){
 
     remove_alone_pieces(m, xy);
-////randomx & randomy baray mokhtasat marakez.
-
-    coordinate(x, y, m, xy);
-////mokhtasat random ghale ha.
-
-    specific_castles(castlex, castley, x, y, xy,ch);
-    for (int i = 0; i < 4; ++i) {
-        printf("x :%d   y :%d\n", castlex[i], castley[i]);
-    }
+specific_ghale(7,9,xy,count,Map,ch);
 }
 void sort_scores(){
     for(int i=1;i<4;++i){
@@ -415,7 +427,7 @@ void sort_scores(){
         }
     }
 }
-void   show_leaderboard(){
+void  show_leaderboard(){
     sort_scores();
     SDL_bool shallExit = SDL_FALSE;
     while (shallExit == SDL_FALSE) {
@@ -457,6 +469,239 @@ void   show_leaderboard(){
 
     printf("\n Hello World\n");
 }
+void color_of_map(int c,struct map Map[]){
+    int t=0;
+    for(int i=0;i<c;++i){
+        if(Map[i].is_ghale==1){
+            if(t==0){
+                Map[i].color1= 0xFF0054FF;//// red
+                Map[i].color2= 0xFF0000B8;
+            }
+            else if(t==1){
+                Map[i].color1= 0xFFFF09E1;/// blue
+                Map[i].color2= 0xFF079191;
+            }
+            else if(t==2){
+                Map[i].color1=0xFF00FF00;/// yellow
+                Map[i].color2= 0xFF004600;
+            }
+            else if(t==3){
+                Map[i].color1= 0xFF00FFFF;/// green
+                Map[i].color2= 0xFF007DFF;
+            }
+            t++;
+        }
+        else{
+            Map[i].color1= 0xFF998877;
+            Map[i].color2= 0xFF000000;
+        }
+    }
+}
+void wich_ghale(int xm,int ym,int count,struct map Map[],int *X,int *Y,int *I){
+    for(int i=0;i<count;++i){
+        if((Map[i].x-40<xm&&xm<Map[i].x+40)&&(Map[i].y-40<ym&&ym<Map[i].y+40)){
+            *X=Map[i].x;
+            *Y=Map[i].y;
+            *I=i;
+            break;
+        }
+    }
+}
+void amount_of_soliders(int i,int j,struct map Map[]){
+    if(Map[i].tedad_sol>Map[j].tedad_sol){
+        Map[j].tedad_sol=Map[i].tedad_sol- Map[j].tedad_sol;
+        Map[j].color1=Map[i].color1;
+        Map[j].color2=Map[i].color2;
+        Map[j].is_ghale=1;
+        Map[i].tedad_sol=0;
+
+    }
+   else if(Map[i].tedad_sol<Map[j].tedad_sol){
+        Map[j].tedad_sol= Map[j].tedad_sol- Map[i].tedad_sol;;
+        Map[i].tedad_sol=0;
+    }
+    else if(Map[i].tedad_sol==Map[j].tedad_sol){
+Map[i].tedad_sol=Map[j].tedad_sol=0;
+    }
+}
+void  moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,int ym2){
+    SDL_Event sdlEvent;
+    int key=0;
+    while( SDL_PollEvent(&sdlEvent)||1) {
+        if (sdlEvent.type == SDL_MOUSEBUTTONDOWN) {
+            SDL_GetMouseState(&xm2, &ym2);
+           key=1;
+            break;
+        }
+    }
+   SDL_bool shallexit=SDL_TRUE;
+   printf("X: %d       y: %d\n",xm1,ym1);
+   printf("*x: %d   *y: %d\n",xm2,ym2);
+    int xs,ys,xd,yd;
+    int is,id;
+   wich_ghale(xm1,ym1,count,Map,&xs,&ys,&is);
+   wich_ghale(xm2,ym2,count,Map,&xd,&yd,&id);
+
+    printf("fuck X: %d       y: %d\n",xs,ys);
+    printf("idiot *x: %d   *y: %d\n",xd,yd);
+
+int k=0;
+int sol[Map[is].tedad_sol];
+int x[Map[is].tedad_sol];
+int y[Map[is].tedad_sol];
+for(int l=0;l<Map[is].tedad_sol;++l){
+    sol[l]=l;
+    x[l]=Map[is].x;
+    y[l]=Map[is].y;
+}
+
+    while(key==1&&shallexit==SDL_TRUE){
+        if(k==15){
+            for(int j=0;j<Map[is].tedad_sol;++j){
+                if(sol[j]!=0)
+                    sol[j]--;
+            }
+            k=0;
+        }
+        SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
+        SDL_RenderClear(sdlrenderer);
+        for (int i = 0; i < count; ++i) {
+            filledCircleColor(sdlrenderer, Map[i].x, Map[i].y, 40, Map[i].color1);
+            filledTrigonColor(sdlrenderer, Map[i].x - 10, Map[i].y, Map[i].x + 10, Map[i].y, Map[i].x, Map[i].y + 10,
+                              Map[i].color2);
+            char c[4];
+            sprintf(c,"%d",Map[i].tedad_sol);
+            stringColor(sdlrenderer,Map[i].x,Map[i].y-10,c,0xFF000000);
+        }
+        for(int j=0;j<Map[is].tedad_sol;++j){
+            filledCircleColor(sdlrenderer,x[j],y[j],5,0xFF000000);
+            if(sol[j]==0) {
+                if (x[j] != xd) {
+                    if (x[j] > xd) {
+                        x[j]--;
+                    }
+                    else{
+                        x[j]++;
+                    }
+                }
+                if (y[j] != yd) {
+                if(y[j]>yd) {
+                    y[j]--;
+                }
+                else{
+                    y[j]++;
+                }
+                }
+                }
+        }
+        SDL_RenderPresent(sdlrenderer);
+        SDL_Delay(250/ FPS);
+
+        k++;
+        if(x[Map[is].tedad_sol-1]==xd && y[Map[is].tedad_sol-1]==yd){
+            shallexit=SDL_FALSE;
+            amount_of_soliders(is,id,Map);
+            break;
+        }
+    }
+
+}
+int is_your_ghale(int x,int y,int count,struct map  Map[]){
+    for(int i=0;i<count;++i){
+        if((Map[i].x-40<x&&x<Map[i].x+40)&&(Map[i].y-40<y&&y<Map[i].y+40)){
+           if(Map[i].color1==0xFF0054FF){
+               return 1;
+           }
+           else{
+               return 0;
+           }
+        }
+    }
+}
+int who_is_winner(int count,struct map Map[]){
+    int key1=0;
+    int key2=0;
+    int key3=0;
+    int key4=0;
+    for(int i=0;i<count;++i){
+        if(Map[i].color1==0xFF998877||Map[i].color1==0xFF0054FF){
+            key1=1;
+        }
+       else if(Map[i].color1==0xFF998877||Map[i].color1== 0xFFFF09E1){
+            key2=2;
+        }
+       else if(Map[i].color1==0xFF998877||Map[i].color1==0xFF00FF00){
+            key3=3;
+        }
+        else if(Map[i].color1==0xFF998877||Map[i].color1==0xFF00FFFF){
+            key4=4;
+        }
+    }
+    if(key1==1&&key2==0&&key3==0&&key4==0){
+        return 1;
+    }
+    else if(key1==0&&key2==1&&key3==0&&key4==0){
+        return 2;
+    }
+    else if(key1==0&&key2==0&&key3==3&&key4==0){
+        return 3;
+    }
+    else if(key1==0&&key2==0&&key3==0&&key4==4){
+        return 4;
+    }
+    else{
+        return 0;
+    }
+}
+void show_result(int x) {
+    SDL_bool shallExit = SDL_FALSE;
+    char cmnd[5];
+    int i=0;
+    while (shallExit == SDL_FALSE) {
+        SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
+        SDL_RenderClear(sdlrenderer);
+        stringColor(sdlrenderer,400,300,"The winner is:",0xFF000000);
+        if(x==1){
+    stringColor(sdlrenderer,400,360,player1_name,0xFF000000);
+        }
+       else if(x==2){
+            stringColor(sdlrenderer,400,360,player2_name,0xFF000000);
+        }
+       else if(x==3){
+            stringColor(sdlrenderer,400,360,player3_name,0xFF000000);
+        }
+       else if(x==4){
+            stringColor(sdlrenderer,400,360,player4_name,0xFF000000);
+        }
+        SDL_RenderPresent(sdlrenderer);
+        SDL_Delay(1000 / FPS);
+        SDL_Event sdlEvent;
+        while (SDL_PollEvent(&sdlEvent)) {
+            switch (sdlEvent.type) {
+                case SDL_QUIT:
+                    shallExit = SDL_TRUE;
+                    break;
+                case SDL_KEYDOWN:
+                 cmnd[i]=sdlEvent.key.keysym.sym;
+                 i++;
+            }
+            cmnd[4]='\0';
+            if(cmnd=="menu"){
+                menu(&choice);
+            }
+        }
+    }
+}
+void changing_the_scores(int x){
+    for(int i=0;i<4;++i){
+        if(scores[i][1]==x){
+            scores[i][0]+=20;
+        }
+        else{
+            scores[i][0]-=10;
+        }
+    }
+}
 
 int main (){
     for(int i=0;i<4;++i){
@@ -471,159 +716,137 @@ int main (){
     sdlrenderer = SDL_CreateRenderer(sdlWindow, -1,SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
 first_menu();
-int choice=0;
+
 menu(&choice);
 
 if(choice==1) {
-////srand baraye random num
     srand(time(0));
-
-
-
+    int count = 0;
     SDL_bool shallExit = SDL_FALSE;
-
-    srand(time(0));
-////randomxy baraye noghat random ke bayad dayere dashte bashand ya na.
     int randomxy[7][9];
-    int randomx[9],randomy[7];
-    int castlex[4],castley[4];
-    random_map_pieces(7,9,randomxy,randomx,randomy,castlex,castley);
-    ////havaset bashe while bara namayesh tasavir va event ha va .....
-    while (shallExit == SDL_FALSE) {
-        SDL_SetRenderDrawColor(sdlrenderer, 0xAF, 0xEE, 0xEE, 0xFF);
-        SDL_RenderClear(sdlrenderer);
-////for baraye rang ghale ha va sarbaz khoone.
-        for (int i = 0; i < 7; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                if (randomxy[i][j] != 0) {
-                    if (randomx[j] == castlex[0] && randomy[i] == castley[0]) {
-                        Uint32 color = 0xFF0054FF;//red
-                        Sint16 x = randomx[j];
-                        Sint16 y = randomy[i];
-                        Uint32 colort = 0xFF0000B8;
-                        filledCircleColor(sdlrenderer, x, y, 40, color);
-                        filledTrigonColor(sdlrenderer, x + 10, y, x - 10, y, x, y + 10, colort);
-                    }
-                    else if (randomx[j] == castlex[1] && randomy[i] == castley[1]) {
-                        Uint32 color = 0xFFFF09E1;//blue
-                        Sint16 x = randomx[j];
-                        Sint16 y = randomy[i];
-                        Uint32 colort = 0xFF079191;
-                        filledCircleColor(sdlrenderer, x, y, 40, color);
-                        filledTrigonColor(sdlrenderer, x + 10, y, x - 10, y, x, y + 10, colort);
-                    }
-                    else if (randomx[j] == castlex[2] && randomy[i] == castley[2]) {
-                        Uint32 color = 0xFF00FF00;//sabz
-                        Sint16 x = randomx[j];
-                        Sint16 y = randomy[i];
-                        Uint32 colort = 0xFF004600;
-                        filledCircleColor(sdlrenderer, x, y, 40, color);
-                        filledTrigonColor(sdlrenderer, x + 10, y, x - 10, y, x, y + 10, colort);
-                    }
-                    else if (randomx[j] == castlex[3] && randomy[i] == castley[3]) {
-                        Uint32 color = 0xFF00FFFF;//zard
-                        Sint16 x = randomx[j];
-                        Sint16 y = randomy[i];
-                        Uint32 colort = 0xFF007DFF;
-                        filledCircleColor(sdlrenderer, x, y, 40, color);
-                        filledTrigonColor(sdlrenderer, x + 10, y, x - 10, y, x, y + 10, colort);
-                    }
-                    else {
-                        Uint32 color = 0xFF998877;//toosi
-                        Sint16 x = randomx[j];
-                        Sint16 y = randomy[i];
-                        Uint32 colort = 0xFF000000;
-                        filledCircleColor(sdlrenderer, x, y, 40, color);
-                        filledTrigonColor(sdlrenderer, x + 10, y, x - 10, y, x, y + 10, colort);
-                    }
-                }
+    srand(time(0));
+    int n = 7, m = 9;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            randomxy[i][j] = rand() % 4;
+            if (randomxy[i][j] != 0) {
+                count++;
             }
         }
-////delay render
-        SDL_RenderPresent(sdlrenderer);
-        SDL_Delay(1000 / FPS);
-//// event marboot be khroj az window.
-        SDL_Event sdlEvent;
+    }
+    struct map Map[count];
+
+    random_map_pieces(7, 9, randomxy, count, Map);
+    color_of_map(count, Map);
+    int xs,ys,xd,yd;
+int xm1,ym1;
+int xm2,ym2;
+int is,id;
+int result;
+
+    SDL_Event sdlEvent;
+//*******************************************************************************************************
+    while (shallExit == SDL_FALSE) {
+
+    SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
+    SDL_RenderClear(sdlrenderer);
+
+    for (int i = 0; i < count; ++i) {
+        filledCircleColor(sdlrenderer, Map[i].x, Map[i].y, 40, Map[i].color1);
+        filledTrigonColor(sdlrenderer, Map[i].x - 10, Map[i].y, Map[i].x + 10, Map[i].y, Map[i].x, Map[i].y + 10,
+                          Map[i].color2);
+        char c[4];
+        sprintf(c, "%d", Map[i].tedad_sol);
+        stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
+    }
+    SDL_RenderPresent(sdlrenderer);
+    SDL_Delay(50000 / FPS);
+    for (int i = 0; i < count; ++i) {
+        if (Map[i].is_ghale == 1 && Map[i].tedad_sol < 100)
+            Map[i].tedad_sol++;
+    }
         while (SDL_PollEvent(&sdlEvent)) {
             switch (sdlEvent.type) {
                 case SDL_QUIT:
                     shallExit = SDL_TRUE;
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    SDL_GetMouseState(&xm1,&ym1);
+                    if(is_your_ghale(xm1,ym1,count,Map)) {
+                        moving_mouse_soliders(count, Map, xm1, ym1, xm2, ym2);
+                    }
+                    break;
             }
         }
+        result=who_is_winner(count,Map);
+        if(result){
+            break;
+        }
+    }
+    //************************************************************************************
+    show_result(result);
+    changing_the_scores(result);
+
+        SDL_Delay(1000);
+        printf("\n Hello World\n");
     }
 
-    SDL_Delay(1000);
-    //SDL_DestroyWindow(sdlWindow);
-
-    printf("\n Hello World\n");
-  //  SDL_Quit();
-}
-
-else if(choice==2) {
+else if(choice==2){
     int ch = 0;
     choosing_the_map(&ch);
-
     SDL_bool shallExit = SDL_FALSE;
-
     srand(time(0));
-////randomxy baraye noghat random ke bayad dayere dashte bashand ya na.
-    int xy[7][9];
-    int x[9],y[7];
-    int castlex[4], castley[4];
-    specific_map(7, 9, xy, x, y, castlex, castley, ch);
 
-    for(int i=0;i<9;++i){
-        printf("x:%d\n",x[i]);
+    int count = 0;
+    int xy[7][9];
+    if (ch == 1) {
+        for (int i = 0; i < 7; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (i % 4 + j % 3 != 0 && i % 4 + j % 3 != 1) {
+                    xy[i][j] = 1;
+                    count++;
+                } else
+                    xy[i][j] = 0;
+            }
+        }
+    } else if (ch == 2) {
+        for (int i = 0; i < 7; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (i % 2 + j % 2 != 0) {
+                    xy[i][j] = 1;
+                    count++;
+                } else {
+                    xy[i][j] = 0;
+                }
+            }
+        }
+    } else if (ch == 3) {
+        for (int i = 0; i < 7; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (i % 3 + j % 4 != 0 && i % 3 + j % 4 != 1) {
+                    xy[i][j] = 1;
+                    count++;
+                } else {
+                    xy[i][j] = 0;
+                }
+            }
+        }
     }
 
-    ////havaset bashe while bara namayesh tasavir va event ha va .....
+    struct map Map[count];
+    specific_map(7, 9, xy, ch, count, Map);
+
+    color_of_map(count, Map);
+
     while (shallExit == SDL_FALSE) {
         SDL_SetRenderDrawColor(sdlrenderer, 0xAF, 0xEE, 0xEE, 0xFF);
         SDL_RenderClear(sdlrenderer);
-        //boxColor(sdlrenderer,500,360,550,410,0xFF000000);
-////for baraye rang ghale ha va sarbaz khoone.
-        for (int i = 0; i < 7; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                if (xy[i][j] != 0) {
-                    if (x[j] == castlex[0] && y[i] == castley[0]) {
-                        Uint32 color = 0xFF0054FF;//red
-                        Sint16 xo = x[j];
-                        Sint16 yo = y[i];
-                        Uint32 colort = 0xFF0000B8;
-                        filledCircleColor(sdlrenderer, xo, yo, 40, color);
-                        filledTrigonColor(sdlrenderer, xo + 10, yo, xo - 10, yo, xo, yo + 10, colort);
-                    } else if (x[j] == castlex[1] && y[i] == castley[1]) {
-                        Uint32 color = 0xFFFF09E1;//blue
-                        Sint16 xo = x[j];
-                        Sint16 yo = y[i];
-                        Uint32 colort = 0xFF079191;
-                        filledCircleColor(sdlrenderer, xo, yo, 40, color);
-                        filledTrigonColor(sdlrenderer, xo + 10, yo, xo - 10, yo, xo, yo + 10, colort);
-                    } else if (x[j] == castlex[2] && y[i] == castley[2]) {
-                        Uint32 color = 0xFF00FF00;//sabz
-                        Sint16 xo = x[j];
-                        Sint16 yo = y[i];
-                        Uint32 colort = 0xFF004600;
-                        filledCircleColor(sdlrenderer, xo, yo, 40, color);
-                        filledTrigonColor(sdlrenderer, xo + 10, yo, xo - 10, yo, xo, yo + 10, colort);
-                    } else if (x[j] == castlex[3] && y[i] == castley[3]) {
-                        Uint32 color = 0xFF00FFFF;//zard
-                        Sint16 xo = x[j];
-                        Sint16 yo = y[i];
-                        Uint32 colort = 0xFF007DFF;
-                        filledCircleColor(sdlrenderer, xo, yo, 40, color);
-                        filledTrigonColor(sdlrenderer, xo + 10, yo, xo - 10, yo, xo, yo + 10, colort);
-                    } else {
-                        Uint32 color = 0xFF998877;//toosi
-                        Sint16 xo = x[j];
-                        Sint16 yo = y[i];
-                        Uint32 colort = 0xFF000000;
-                        filledCircleColor(sdlrenderer, xo, yo, 40, color);
-                        filledTrigonColor(sdlrenderer, xo + 10, yo, xo - 10, yo, xo, yo + 10, colort);
-                    }
-                }
-            }
+
+        for (int i = 0; i < count; ++i) {
+            filledCircleColor(sdlrenderer, Map[i].x, Map[i].y, 40, Map[i].color1);
+            filledTrigonColor(sdlrenderer, Map[i].x - 10, Map[i].y, Map[i].x + 10, Map[i].y, Map[i].x, Map[i].y + 10,
+                              Map[i].color2);
         }
         SDL_RenderPresent(sdlrenderer);
         SDL_Delay(1000 / FPS);
@@ -636,14 +859,10 @@ else if(choice==2) {
                     break;
             }
         }
-
     }
 
     SDL_Delay(1000);
-  //  SDL_DestroyWindow(sdlWindow);
-
     printf("\n Hello World\n");
-   // SDL_Quit();
 }
 
 else if(choice==3){
@@ -654,12 +873,9 @@ SDL_bool shallExit = SDL_FALSE;
 while (shallExit == SDL_FALSE) {
 SDL_SetRenderDrawColor(sdlrenderer, 0xAF, 0xEE, 0xEE, 0xFF);
 SDL_RenderClear(sdlrenderer);
-
-
-////delay render
 SDL_RenderPresent(sdlrenderer);
 SDL_Delay(1000 / FPS);
-//// event marboot be khroj az window.
+
 SDL_Event sdlEvent;
 while (SDL_PollEvent(&sdlEvent)) {
 switch (sdlEvent.type) {
