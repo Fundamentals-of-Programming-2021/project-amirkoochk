@@ -545,7 +545,7 @@ void changing_attribute1(int c,struct map Map[],struct att_sol attSol[],int inde
     for(int i=0;i<c;++i){
         if(Map[i].color1==tcolor){
             attSol[i].speed=s;
-           // printf("speed of %d : %d \n",i,attSol[i].speed);
+            printf("speed of %d : %d \n",i,attSol[i].speed);
         }
     }
 }
@@ -667,6 +667,11 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
             sprintf(c, "%d", Map[i].tedad_sol);
             stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
         }
+ /*       if(zaman>0&&zaman<30){
+            filledEllipseColor(sdlrenderer,X,Y,30,20,0xFFBC0CFF);
+            stringColor(sdlrenderer,X-25,Y,"spell",0xFF000000);
+            ellipseColor(sdlrenderer,X,Y,30,20,0xFFB800B8);
+        }*/
         for (int j = 0; j < Map[is].tedad_sol; ++j){
             filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
         if (sol[j] == 0) {
@@ -694,6 +699,7 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
                     *mahv = 0;
                     attSol[is].spell_type=ran;
                 }
+
                 amount_of_soliders(is, id, Map, attSol);
             }
             if (*kk == 1) {
@@ -746,7 +752,7 @@ int who_is_winner(int count,struct map Map[]){
     if(key1==1&&key2==0&&key3==0&&key4==0){
         return 1;
     }
-    else if(key1==0&&key2==1&&key3==0&&key4==0){
+    else if(key1==0&&key2==2&&key3==0&&key4==0){
         return 2;
     }
     else if(key1==0&&key2==0&&key3==3&&key4==0){
@@ -817,24 +823,29 @@ void random_spell_xy(int *x,int *y,int n,int m,int xy[][m],int c,struct map Map[
     }
 }
 int des_coordinate(int index,int c,struct map Map[],struct att_sol attSol[]){
+   int karan[4]={0,10,20,30};
     srand(time(0));
    int random=rand()%5;///0 1 -->toosi       2 3 4 --> Rangi
-   printf("des_coor : %d",random);
-           for(int i=0;i<c;++i){
+   //printf("des_coor : %d\n",random);
+           for(int i=karan[rand()%4];i<c;++i){
                if(random==0||random==1){
         if(Map[i].color1==0xFF998877 && Map[i].tedad_sol<=Map[index].tedad_sol){
             return i;
         }
         }
                else{
-                   if(Map[i].color1==Map[index].color1 && Map[i].tedad_sol<=Map[index].tedad_sol){
+                   if(Map[i].color1!=Map[index].color1 && Map[i].tedad_sol<=Map[index].tedad_sol && Map[i].color1!=0xFF998877){
                        return i;
                    }
                }
     }
+           return -1;
 }
-void bot_rendering(int X,int Y,int is,int c,struct map Map[],struct att_sol attSol[]){
+void bot_rendering(int X,int Y,int is,int c,struct map Map[],struct att_sol attSol[],int ran,int *mahv,int *kk){
  int id  = des_coordinate(is,c,Map,attSol);
+ if(id==-1){
+     return ;
+ }
  int xd=Map[id].x,yd=Map[id].y;
  SDL_bool shallexit=SDL_TRUE;
     int sol[Map[is].tedad_sol];
@@ -898,7 +909,7 @@ void bot_rendering(int X,int Y,int is,int c,struct map Map[],struct att_sol attS
      }*/
 
      SDL_RenderPresent(sdlrenderer);
-     SDL_Delay(250 / FPS);
+     SDL_Delay(250 / FPS);//250
      //  printf("**%d**\n",zaman);
      att_time++;
      if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
@@ -907,7 +918,7 @@ void bot_rendering(int X,int Y,int is,int c,struct map Map[],struct att_sol attS
      }
  }
  }
-void bot_coordinate(int key,Uint32 color ,int c,struct map Map[],struct att_sol attSol[]){
+void bot_coordinate(int key,Uint32 color ,int c,struct map Map[],struct att_sol attSol[],int ran,int *mahv,int *kk,int *is){
     if(key==0){
         return ;
     }
@@ -922,16 +933,21 @@ void bot_coordinate(int key,Uint32 color ,int c,struct map Map[],struct att_sol 
                 k++;
             }
         }
+        if(k==0){
+            return ;
+        }
+       // printf("k in bot_coo : %d\n",k);
         srand(time(0));
         int random=rand()%k;
-        bot_rendering(coo[random][0],coo[random][1],coo[random][2],c,Map,attSol);
+      *is = coo[random][2];
+        bot_rendering(coo[random][0],coo[random][1],coo[random][2],c,Map,attSol,ran,mahv,kk);
     }
 }
-void bots_gate(int c,struct map Map[],struct att_sol attSol[]) {
+void bots_gate(int c,struct map Map[],struct att_sol attSol[],int ran,int *mahv,int *kk,int *is) {
     srand(time(0));
-    bot_coordinate(rand()%2,0xFFFF09E1,c,Map,attSol);
-   // bot_coordinate(rand()%2,0xFF00FF00,c,Map,attSol);
-   // bot_coordinate(rand()%2, 0xFF00FFFF,c,Map,attSol);
+    bot_coordinate(rand()%2,0xFFFF09E1,c,Map,attSol,ran,mahv,kk,is); /// blue ,
+    bot_coordinate(rand()%2,0xFF00FF00,c,Map,attSol,ran,mahv,kk,is); ///green
+    bot_coordinate(rand()%2, 0xFF00FFFF,c,Map,attSol,ran,mahv,kk,is); ///yellow
 }
 
 int main (){
@@ -971,7 +987,7 @@ int main (){
 
         random_map_pieces(7, 9, randomxy, count, Map,attSol);
         color_of_map(count, Map);
-        printf("%d",count);
+       // printf("%d",count);
       /*  for(int i=0;i< count;++i){
 
             printf("x: %d  y: %d\n",Map[i].x,Map[i].y);
@@ -999,7 +1015,7 @@ int main (){
            SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
            SDL_RenderClear(sdlrenderer);
 
-            if(zaman==30){
+            if(zaman==30) {
                 wich_spell(count,Map,attSol,is,ran,1);
                 key2=0;
                 zaman=0;
@@ -1010,7 +1026,7 @@ int main (){
                 ran=rand()%4;
                 ran++;
                 mahv=1;
-            } ///Handling The Time Of Each Spell.
+            }  ///Handling The Time Of Each Spell.
 
             for (int i = 0; i < count; ++i) { ///Baraye Render Kardan e Spell Va Map.
             //    printf("speed:%d\n",attSol[i].speed);
@@ -1022,12 +1038,13 @@ int main (){
                 stringColor(sdlrenderer,Map[i].x,Map[i].y-10,c,0xFF000000);
 
                 if(time1>=target_time&&mahv==1){
-                    filledEllipseColor(sdlrenderer,X,Y,30,20,0xFF3941FF);
+                    filledEllipseColor(sdlrenderer,X,Y,30,20,0xFFBC0CFF);
                     stringColor(sdlrenderer,X-25,Y,"spell",0xFF000000);
+                    ellipseColor(sdlrenderer,X,Y,30,20,0xFFB800B8);
                 }
             }
                 if(bots_time>=bt_target){
-                    bots_gate(count,Map,attSol);
+                    bots_gate(count,Map,attSol,ran,&mahv,&key2,&is);
                     bots_time=0;
                 }
             SDL_RenderPresent(sdlrenderer);
