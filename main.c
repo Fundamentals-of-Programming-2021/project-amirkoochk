@@ -461,10 +461,11 @@ void show_leaderboard(char *name[],int scores[],int i){
     while (shallExit == SDL_FALSE) {
         SDL_SetRenderDrawColor(sdlrenderer, 0xAF, 0xEE, 0xEE, 0xFF);
         SDL_RenderClear(sdlrenderer);
+
         roundedBoxColor(sdlrenderer, 250, 40, 750, 680,1, 0xFF000000);
 
         for (int j = 0; j <i; ++i) {
-            stringColor(sdlrenderer,260,(x*j)+20,name[j],0xFF000000);
+            stringColor(sdlrenderer,260,60+(x*j),name[j],0xFF000000);
             thickLineColor(sdlrenderer, 250, 40+(x*j), 750, 40+(x*j), 1, 0xFF000000);
         }
 
@@ -485,25 +486,34 @@ void show_leaderboard(char *name[],int scores[],int i){
                menu(&choice);
                break;
                    }
+           break;
               }
          }
     }
-
+    SDL_Delay(1000);
     printf("\n Hello World\n");
 }
 void take_from_file(){
     char n[20];
     char *name[10];
     int scores[10];
+    int x;
     int i=0;
     FILE *source;
-    source=fopen("names&scores.txt","r+");
+    source=fopen("names&scores.txt","r");
     while(!feof(source)){
         fscanf(source,"%s",n);
+        printf("the n is : %s\n",n);
         name[i]=n;
         fscanf(source," ");
-        fscanf(source,"%d",scores[i]);
+        fscanf(source,"%d",&x);
+        scores[i]=x;
+        fscanf(source," ");
         i++;
+    }
+    for(int j=0;j<i;++j) {
+        printf("string is : %s\n", name[j]);
+        printf("score is : %d\n", scores[j]);
     }
     fclose(source);
     show_leaderboard(name,scores,i);
@@ -516,10 +526,11 @@ void save_in_file(int x) {
         score=score-10;
     }
     FILE *des;
-    des=fopen("names&scores.txt","r+");
+    des=fopen("names&scores.txt","a+");
     fprintf(des,"%s",player1_name);
     fprintf(des," ");
     fprintf(des,"%d",score);
+    fprintf(des," ");
     fclose(des);
 }
 void color_of_map(int c,struct map Map[]){
@@ -1242,7 +1253,7 @@ for(int i=0;i<count;++i){
     }
 
     else if(choice==4){
-  take_from_file();
+        take_from_file();
     }
 
     SDL_DestroyWindow(sdlWindow);
