@@ -35,7 +35,7 @@ struct att_sol{
     float power;///tasir sarbaz bar ghale harif,                    1 ------> Xx kardan speed  DONE
     int speed;///speed of soliders,                                 2 ------> taghir power be 2 ya 0.5
     int  att;                                                ///    3 ------> power harif -1 mishe
-                                                               //// 4----> att yani tavanayi hamle 0 ya 1
+    //// 4----> att yani tavanayi hamle 0 ya 1
 };
 void remove_alone_pieces(int m,int xy[][m]){
     for(int i=0;i<7;++i){
@@ -91,20 +91,20 @@ void remove_alone_pieces(int m,int xy[][m]){
     }
 }
 int empty(int x,int kingx[],int y,int kingy[],int index,int xy[][x]){
-   int X[9]={0,1,2,3,4,5,6,7,8};
-   int Y[7]={0,1,2,3,4,5,6};
-   for(int i=0;i<9;++i){
-       if(X[i]!=kingx[0]&&X[i]!=kingx[1]&&X[i]!=kingx[2]&&X[i]!=kingx[3]){
-           kingx[index]=X[i];
-           break;
-       }
-   }
-   for(int j=0;j<7;++j){
-       if(Y[j]!=kingy[0]&&Y[j]!=kingy[1]&&Y[j]!=kingy[2]&&Y[j]!=kingy[3]){
-           kingy[index]=Y[j];
-           break;
-       }
-   }
+    int X[9]={0,1,2,3,4,5,6,7,8};
+    int Y[7]={0,1,2,3,4,5,6};
+    for(int i=0;i<9;++i){
+        if(X[i]!=kingx[0]&&X[i]!=kingx[1]&&X[i]!=kingx[2]&&X[i]!=kingx[3]){
+            kingx[index]=X[i];
+            break;
+        }
+    }
+    for(int j=0;j<7;++j){
+        if(Y[j]!=kingy[0]&&Y[j]!=kingy[1]&&Y[j]!=kingy[2]&&Y[j]!=kingy[3]){
+            kingy[index]=Y[j];
+            break;
+        }
+    }
 }
 void check(int kingx[],int kingy[],int n,int m,int xy[][m]){
     srand(time(0));
@@ -447,9 +447,9 @@ void sort_scores(char *name[],int scores[],int index){
                 scores[j]=scores[j+1];
                 scores[j+1]=h;
                 char *c[1];
-                 c[0]=name[j];
-                 name[j]=name[j+1];
-                 name[j+1]=c[0];
+                c[0]=name[j];
+                name[j]=name[j+1];
+                name[j+1]=c[0];
             }
         }
     }
@@ -481,14 +481,14 @@ void show_leaderboard(char *name[],int scores[],int i){
                     shallExit = SDL_TRUE;
                     break;
                 case SDL_KEYDOWN:
-           cmnd=sdlEvent.key.keysym.sym;
-           if(cmnd=='m'){
-               menu(&choice);
-               break;
-                   }
-           break;
-              }
-         }
+                    cmnd=sdlEvent.key.keysym.sym;
+                    if(cmnd=='m'){
+                        menu(&choice);
+                        break;
+                    }
+                    break;
+            }
+        }
     }
     SDL_Delay(1000);
     printf("\n Hello World\n");
@@ -656,25 +656,154 @@ void rest_attri(int c,struct map Map[],struct att_sol attSol[],int index,int ran
 }
 void wich_spell(int c,struct map Map[],struct att_sol attSol[],int index,int ran){
 
-   if(ran==1) {
-           changing_attribute1(c, Map, attSol, index, 10);
-   }
-  else if(ran==2) {
-           changing_attribute23(c, Map, attSol, index, 0);
-   }
-  else if(ran==3) {
-       changing_attribute23(c, Map, attSol, index, 1);
-   }
-      else if(ran==4) {
-       changing_attribute4(c, Map, attSol, index, 0);
-   }
+    if(ran==1) {
+        changing_attribute1(c, Map, attSol, index, 10);
+    }
+    else if(ran==2) {
+        changing_attribute23(c, Map, attSol, index, 0);
+    }
+    else if(ran==3) {
+        changing_attribute23(c, Map, attSol, index, 1);
+    }
+    else if(ran==4) {
+        changing_attribute4(c, Map, attSol, index, 0);
+    }
 }
 void change_spell_type(int count,struct map Map[],struct att_sol attSol[],Uint32 color,int bool){
-   for(int i=0;i<count;++i){
-       if(Map[i].color2==color){
-           attSol[i].spell_type=bool;
-       }
-   }
+    for(int i=0;i<count;++i){
+        if(Map[i].color2==color){
+            attSol[i].spell_type=bool;
+        }
+    }
+}
+int is_your_ghale(int x,int y,int count,struct map  Map[]){
+    for(int i=0;i<count;++i){
+        if((Map[i].x-40<x&&x<Map[i].x+40)&&(Map[i].y-40<y&&y<Map[i].y+40)){
+            if(Map[i].color1==0xFF0054FF){
+                return i;
+            }
+            else{
+                return -1;
+            }
+        }
+    }
+}
+void moving_mouse_soliders_2(int count,struct map Map[],int xs,int ys,struct att_sol attSol[],int X,int Y,int *kk,int ran,int *mahv,int Is,Uint32 *color,int is,int j) {
+    int xd,yd;
+    SDL_Event sdlEvent;
+    int key = 0;
+    while (SDL_PollEvent(&sdlEvent) || 1) {
+        if (sdlEvent.type == SDL_MOUSEBUTTONDOWN) {
+            SDL_GetMouseState(&xd, &yd);
+            key = 1;
+            break;
+        }
+    }
+    SDL_bool shallexit = SDL_TRUE;
+    int Xs, Ys, Xd, Yd;
+    int Id;
+    wich_ghale(xs, ys, count, Map, &Xs, &Ys, &Is);
+    wich_ghale(xd, yd, count, Map, &Xd, &Yd, &Id);
+
+if(Is==is){
+    Map[is].tedad_sol=Map[is].tedad_sol-j-1;
+}
+    int s = 1;
+    int k = 0;
+    int tedad=0;
+    int key3=0;
+    int timer=0;
+    int sol[Map[Is].tedad_sol];
+    int x[Map[Is].tedad_sol];
+    int y[Map[Is].tedad_sol];
+    for (int l = 0; l < Map[Is].tedad_sol; ++l) {
+        sol[l] = l;
+        x[l] = Map[Is].x;
+        y[l] = Map[Is].y;
+    }
+    while (key == 1 && shallexit == SDL_TRUE) {
+        if (k == 15) {
+            for (int j = 0; j < Map[Is].tedad_sol; ++j) {
+                if (sol[j] != 0)
+                    sol[j]--;
+            }
+            k = 0;
+        }
+        if (timer == 60) {
+            for (int i = 0; i < count; ++i) {
+                if (Map[i].is_ghale == 1 && Map[i].tedad_sol < 100 && !(Map[i].x == Xs && Map[i].y == Ys) &&!(Map[i].x == Xd && Map[i].y == Yd))
+                    Map[i].tedad_sol++;
+            }
+            timer = 0;
+        }
+        SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
+        SDL_RenderClear(sdlrenderer);
+        for (int i = 0; i < count; ++i) {
+            filledCircleColor(sdlrenderer, Map[i].x, Map[i].y, 40, Map[i].color1);
+            filledTrigonColor(sdlrenderer, Map[i].x - 10, Map[i].y, Map[i].x + 10, Map[i].y, Map[i].x, Map[i].y + 10,
+                              Map[i].color2);
+            char c[4];
+            sprintf(c, "%d", Map[i].tedad_sol);
+            stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
+        }
+        /*       if(zaman>0&&zaman<30){
+                   filledEllipseColor(sdlrenderer,X,Y,30,20,0xFFBC0CFF);
+                   stringColor(sdlrenderer,X-25,Y,"spell",0xFF000000);
+                   ellipseColor(sdlrenderer,X,Y,30,20,0xFFB800B8);
+               }*/
+       // printf("2ndclick:%d\n",Map[Is].tedad_sol);
+        for (int j = 0; j < Map[Is].tedad_sol; ++j) {
+            filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
+           // printf("index:%d x:%d y:%d\n",j,x[j],y[j]);
+            if (sol[j] == 0) {
+                if (tedad == 0 && x[j] == X && y[j] == Y && time1 >= target_time) {
+                    key3 = 1;
+                    tedad++;
+                }
+                if (x[j] != xd) {
+                    if (x[j] > xd) {
+                        x[j] -= attSol[Is].speed;
+                    } else {
+                        x[j] += attSol[Is].speed;
+                    }
+                }
+                if (y[j] != yd) {
+                    if (y[j] > yd) {
+                        y[j] -= attSol[Is].speed;
+                    } else {
+                        y[j] += attSol[Is].speed;
+                    }
+                }
+            }
+        }
+        /* printf("The key3 is : %d\n",key3);*/
+        if (x[Map[Is].tedad_sol - 1] == xd && y[Map[Is].tedad_sol - 1] == yd) {
+            shallexit = SDL_FALSE;
+            if (time1 >= target_time && key3 == 1) {
+                *kk = 1;
+                key = 0;
+                *mahv = 0;
+                *color = Map[is].color2;
+                change_spell_type(count, Map, attSol, *color, ran);
+            }
+            amount_of_soliders(Is, Id, Map, attSol);
+        }
+
+        if (*kk == 1) {
+            wich_spell(count, Map, attSol, Is, ran);
+        }
+
+        SDL_RenderPresent(sdlrenderer);
+        SDL_Delay(250 / FPS);
+        //  printf("**%d**\n",zaman);
+        k++;
+        timer++;
+
+        if (x[Map[Is].tedad_sol - 1] == xd && y[Map[Is].tedad_sol - 1] == yd) {
+            shallexit = SDL_FALSE;
+            break;
+        }
+    }
 }
 void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,int ym2,struct att_sol attSol[],int X,int Y,int *kk,
                            int ran,int *mahv,int is,Uint32 *color) {
@@ -701,9 +830,14 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
     int k = 0;
     int tedad=0;
     int key3=0;
+    int timer=0;
     int sol[Map[is].tedad_sol];
     int x[Map[is].tedad_sol];
     int y[Map[is].tedad_sol];
+    int Xs,Ys;
+    int Is;
+    int shit=Map[is].tedad_sol;
+    int shi=0;
     for (int l = 0; l < Map[is].tedad_sol; ++l) {
         sol[l] = l;
         x[l] = Map[is].x;
@@ -718,6 +852,14 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
             }
             k = 0;
         }
+        if (timer == 60) {
+            for (int i = 0; i < count; ++i) {
+                if (Map[i].is_ghale == 1 && Map[i].tedad_sol < 100 && !(Map[i].x == xs && Map[i].y == ys) &&
+                    !(Map[i].x == xd && Map[i].y == yd))
+                    Map[i].tedad_sol++;
+            }
+            timer = 0;
+        }
         SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(sdlrenderer);
         for (int i = 0; i < count; ++i) {
@@ -728,77 +870,85 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
             sprintf(c, "%d", Map[i].tedad_sol);
             stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
         }
- /*       if(zaman>0&&zaman<30){
-            filledEllipseColor(sdlrenderer,X,Y,30,20,0xFFBC0CFF);
-            stringColor(sdlrenderer,X-25,Y,"spell",0xFF000000);
-            ellipseColor(sdlrenderer,X,Y,30,20,0xFFB800B8);
-        }*/
-        for (int j = 0; j < Map[is].tedad_sol; ++j){
+        /*       if(zaman>0&&zaman<30){
+                   filledEllipseColor(sdlrenderer,X,Y,30,20,0xFFBC0CFF);
+                   stringColor(sdlrenderer,X-25,Y,"spell",0xFF000000);
+                   ellipseColor(sdlrenderer,X,Y,30,20,0xFFB800B8);
+               }*/
+        printf("shit:%d\n",shit);
+        int j=shi;
+        for (j = shi; j < shit; ++j) {
             filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
-        if (sol[j] == 0) {
-            if(tedad==0 && x[j]==X && y[j]==Y && time1 >= target_time) {
-               key3=1;
-               tedad++;
-            }
-            if (x[j] != xd) {
-                if (x[j] > xd) {
-                    x[j] -= attSol[is].speed;
-                }
-                else {
-                    x[j] += attSol[is].speed;
-                }
-            }
-            if (y[j] != yd) {
-                if (y[j] > yd) {
-                    y[j] -= attSol[is].speed;
-                }
-                else {
-                    y[j] += attSol[is].speed;
-                }
-            }
-        }
-    }
-       /* printf("The key3 is : %d\n",key3);*/
-        if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
-            shallexit = SDL_FALSE;
-            if (time1 >= target_time && key3==1) {
-                *kk = 1;
-                key = 0;
-                *mahv = 0;
-                *color=Map[is].color2;
-                change_spell_type(count,Map,attSol,*color,ran);
-            }
-            amount_of_soliders(is, id, Map, attSol);
-        }
-
-            if (*kk == 1) {
-                wich_spell(count, Map, attSol, is, ran);
-            }
-
-            SDL_RenderPresent(sdlrenderer);
-            SDL_Delay(250 / FPS);
-            //  printf("**%d**\n",zaman);
-            k++;
-            if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
-                shallexit = SDL_FALSE;
+         //   printf("*index:%d x:%d y:%d\n",j,x[j],y[j]);
+            if (sol[j] == 0) {
+if(x[j]==xs && y[j]==ys ) {
+    while (SDL_PollEvent(&sdlEvent)) {
+        if (sdlEvent.type == SDL_MOUSEBUTTONDOWN) {
+            SDL_GetMouseState(&Xs, &Ys);
+            Is = is_your_ghale(Xs, Ys, count, Map);
+            if (Is != -1 && attSol[Is].att == 1) {
+                moving_mouse_soliders_2(count, Map, Xs, Ys, attSol, X, Y, kk, ran, mahv, Is, color, is, j);
+                shit = j+1 ;
                 break;
-            }
-        }
-//return is;
-    }
-
-int is_your_ghale(int x,int y,int count,struct map  Map[]){
-    for(int i=0;i<count;++i){
-        if((Map[i].x-40<x&&x<Map[i].x+40)&&(Map[i].y-40<y&&y<Map[i].y+40)){
-            if(Map[i].color1==0xFF0054FF){
-                return i;
-            }
-            else{
-                return -1;
             }
         }
     }
 }
+                if (tedad == 0 && x[j] == X && y[j] == Y && time1 >= target_time) {
+                    key3 = 1;
+                    tedad++;
+                }
+                if (x[j] != xd) {
+                    if (x[j] > xd) {
+                        x[j] -= attSol[is].speed;
+                    } else {
+                        x[j] += attSol[is].speed;
+                    }
+                }
+                if (y[j] != yd) {
+                    if (y[j] > yd) {
+                        y[j] -= attSol[is].speed;
+                    } else {
+                        y[j] += attSol[is].speed;
+                    }
+                }
+            }
+        }
+        /* printf("The key3 is : %d\n",key3);*/
+          Map[is].tedad_sol=j+1;
+     /*   printf("x:%d   y:%d\n",x[shit-1],y[shit-1]);
+        printf("soliders:%d\n",Map[is].tedad_sol);*/
+        if (x[shit-1] == xd && y[shit-1] == yd) {
+            shallexit = SDL_FALSE;
+            if (time1 >= target_time && key3 == 1) {
+                *kk = 1;
+                key = 0;
+                *mahv = 0;
+                *color = Map[is].color2;
+                change_spell_type(count, Map, attSol, *color, ran);
+            }
+            amount_of_soliders(is, id, Map, attSol);
+        }
+
+        if (*kk == 1) {
+            wich_spell(count, Map, attSol, is, ran);
+        }
+
+        SDL_RenderPresent(sdlrenderer);
+        SDL_Delay(250 / FPS);
+        //  printf("**%d**\n",zaman);
+        k++;
+        timer++;
+
+        if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
+            shallexit = SDL_FALSE;
+            break;
+        }
+    }
+//return is;
+}
+
+
 int who_is_winner(int count,struct map Map[]){
     int key1=0;
     int key2=0;
@@ -807,18 +957,18 @@ int who_is_winner(int count,struct map Map[]){
             key1 = 1;
         }
         else if(Map[i].color1!=0xFF0054FF){
-           key2=2;
+            key2=2;
         }
     }
- if(key1==1 && key2==0){
-     return 1;
- }
- else if(key1==0 && key2==2){
-     return 2;
- }
- else{
-  return 0;
- }
+    if(key1==1 && key2==0){
+        return 1;
+    }
+    else if(key1==0 && key2==2){
+        return 2;
+    }
+    else{
+        return 0;
+    }
 }
 void show_result(int x) {
     save_in_file(x);
@@ -856,42 +1006,42 @@ void show_result(int x) {
     }
 }
 void changing_the_scores(int x){
- if(x==1){
+    if(x==1){
 
- }
+    }
 }
 void random_spell_xy(int *x,int *y,int n,int m,int xy[][m],int c,struct map Map[]){
     srand(time(0));
     int ran=rand()%c;
-        *x= Map[ran].x;
-        *y=Map[ran].y;
+    *x= Map[ran].x;
+    *y=Map[ran].y;
 }
 int des_coordinate(int index,int c,struct map Map[],struct att_sol attSol[]){
-   int karan[4]={0,10,20,30};
+    int karan[4]={0,10,20,30};
     srand(time(0));
-   int random=rand()%5;///0 1 -->toosi       2 3 4 --> Rangi
-   //printf("des_coor : %d\n",random);
-           for(int i=karan[rand()%4];i<c;++i){
-               if(random==0||random==1){
-        if(Map[i].color1==0xFF998877 && Map[i].tedad_sol<=Map[index].tedad_sol){
-            return i;
+    int random=rand()%5;///0 1 -->toosi       2 3 4 --> Rangi
+    //printf("des_coor : %d\n",random);
+    for(int i=karan[rand()%4];i<c;++i){
+        if(random==0||random==1){
+            if(Map[i].color1==0xFF998877 && Map[i].tedad_sol<=Map[index].tedad_sol){
+                return i;
+            }
         }
+        else{
+            if(Map[i].color1!=Map[index].color1 && Map[i].tedad_sol<=Map[index].tedad_sol && Map[i].color1!=0xFF998877){
+                return i;
+            }
         }
-               else{
-                   if(Map[i].color1!=Map[index].color1 && Map[i].tedad_sol<=Map[index].tedad_sol && Map[i].color1!=0xFF998877){
-                       return i;
-                   }
-               }
     }
-           return -1;
+    return -1;
 }
 void bot_rendering(int X,int Y,int is,int c,struct map Map[],struct att_sol attSol[],int ran,int *mahv,int *kk,Uint32 *colort,int xspell,int yspell){
- int id  = des_coordinate(is,c,Map,attSol);
- if(id==-1){
-     return ;
- }
- int xd=Map[id].x,yd=Map[id].y;
- SDL_bool shallexit=SDL_TRUE;
+    int id  = des_coordinate(is,c,Map,attSol);
+    if(id==-1){
+        return ;
+    }
+    int xd=Map[id].x,yd=Map[id].y;
+    SDL_bool shallexit=SDL_TRUE;
     int sol[Map[is].tedad_sol];
     int x[Map[is].tedad_sol];
     int y[Map[is].tedad_sol];
@@ -903,71 +1053,71 @@ void bot_rendering(int X,int Y,int is,int c,struct map Map[],struct att_sol attS
         x[l] = Map[is].x;
         y[l] = Map[is].y;
     }
- while(shallexit==SDL_TRUE){
-     if (att_time == 15) {
-         for (int j = 0; j < Map[is].tedad_sol; ++j) {
-             if (sol[j] != 0)
-                 sol[j]--;
-         }
-         att_time=0;
-     }
-     SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
-     SDL_RenderClear(sdlrenderer);
-     for (int i = 0; i < c; ++i) {
-         filledCircleColor(sdlrenderer, Map[i].x, Map[i].y, 40, Map[i].color1);
-         filledTrigonColor(sdlrenderer, Map[i].x - 10, Map[i].y, Map[i].x + 10, Map[i].y, Map[i].x, Map[i].y + 10,
-                           Map[i].color2);
-         char c[4];
-         sprintf(c, "%d", Map[i].tedad_sol);
-         stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
-     }
-     for (int j = 0; j < Map[is].tedad_sol; ++j){
-         filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
-         if (sol[j] == 0) {
-             if(tedad==0 && x[j]==xspell && y[j]==yspell && time1 >= target_time) {
-                 key3=1;
-                 tedad++;
-             }
-             if (x[j] != xd) {
-                 if (x[j] > xd) {
-                     x[j] -= attSol[is].speed;
-                 } else {
-                     x[j] += attSol[is].speed;
-                 }
-             }
-             if (y[j] != yd) {
-                 if (y[j] > yd) {
-                     y[j] -= attSol[is].speed;
-                 } else {
-                     y[j] += attSol[is].speed;
-                 }
-             }
-         }
-     }
-     if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
-         shallexit = SDL_FALSE;
-         if (time1 >= target_time && key3==1) {
-             *kk = 1;
-             *mahv = 0;
-             *colort=Map[is].color2;
-             change_spell_type(c,Map,attSol,*colort,ran);
-         }
-         amount_of_soliders(is, id, Map, attSol);
-     }
-     if (*kk == 1) {
-         wich_spell(c, Map, attSol, is, ran);
-     }
+    while(shallexit==SDL_TRUE){
+        if (att_time == 15) {
+            for (int j = 0; j < Map[is].tedad_sol; ++j) {
+                if (sol[j] != 0)
+                    sol[j]--;
+            }
+            att_time=0;
+        }
+        SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
+        SDL_RenderClear(sdlrenderer);
+        for (int i = 0; i < c; ++i) {
+            filledCircleColor(sdlrenderer, Map[i].x, Map[i].y, 40, Map[i].color1);
+            filledTrigonColor(sdlrenderer, Map[i].x - 10, Map[i].y, Map[i].x + 10, Map[i].y, Map[i].x, Map[i].y + 10,
+                              Map[i].color2);
+            char c[4];
+            sprintf(c, "%d", Map[i].tedad_sol);
+            stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
+        }
+        for (int j = 0; j < Map[is].tedad_sol; ++j){
+            filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
+            if (sol[j] == 0) {
+                if(tedad==0 && x[j]==xspell && y[j]==yspell && time1 >= target_time) {
+                    key3=1;
+                    tedad++;
+                }
+                if (x[j] != xd) {
+                    if (x[j] > xd) {
+                        x[j] -= attSol[is].speed;
+                    } else {
+                        x[j] += attSol[is].speed;
+                    }
+                }
+                if (y[j] != yd) {
+                    if (y[j] > yd) {
+                        y[j] -= attSol[is].speed;
+                    } else {
+                        y[j] += attSol[is].speed;
+                    }
+                }
+            }
+        }
+        if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
+            shallexit = SDL_FALSE;
+            if (time1 >= target_time && key3==1) {
+                *kk = 1;
+                *mahv = 0;
+                *colort=Map[is].color2;
+                change_spell_type(c,Map,attSol,*colort,ran);
+            }
+            amount_of_soliders(is, id, Map, attSol);
+        }
+        if (*kk == 1) {
+            wich_spell(c, Map, attSol, is, ran);
+        }
 
-     SDL_RenderPresent(sdlrenderer);
-     SDL_Delay(250 / FPS);//250
-     //  printf("**%d**\n",zaman);
-     att_time++;
-     if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
-         shallexit = SDL_FALSE;
-         break;
-     }
- }
- }
+        SDL_RenderPresent(sdlrenderer);
+        SDL_Delay(250 / FPS);//250
+        //  printf("**%d**\n",zaman);
+        att_time++;
+        if (x[Map[is].tedad_sol - 1] == xd && y[Map[is].tedad_sol - 1] == yd) {
+            shallexit = SDL_FALSE;
+            break;
+        }
+    }
+}
 void bot_coordinate(int key,Uint32 color ,int c,struct map Map[],struct att_sol attSol[],int ran,int *mahv,int *kk,int *is,Uint32 *colort,int xspell,int yspell){
     if(key==0){
         return ;
@@ -986,7 +1136,7 @@ void bot_coordinate(int key,Uint32 color ,int c,struct map Map[],struct att_sol 
         if(k==0){
             return ;
         }
-       // printf("k in bot_coo : %d\n",k);
+        // printf("k in bot_coo : %d\n",k);
         srand(time(0));
         int random=rand()%k;
         *is = coo[random][2];
@@ -1076,10 +1226,10 @@ void game(int count,struct map Map[],struct att_sol attSol[],int n,int m,int ran
                 ellipseColor(sdlrenderer, X, Y, 30, 20, 0xFFB800B8);
             }
         }
-        if(bots_time>=bt_target){
+        /*if(bots_time>=bt_target){
             bots_gate(count,Map,attSol,ran,&mahv,&key2,&isb,&color_ghale_spell_bot,X,Y);
             bots_time=0;
-        }
+        }*/
         SDL_RenderPresent(sdlrenderer);
         SDL_Delay(50000 / FPS);
 
@@ -1216,11 +1366,11 @@ int main (){
         specific_map(7, 9, xy, ch, count, Map,attSol);
 
         color_of_map(count, Map);
-for(int i=0;i<count;++i){
-    if(Map[i].is_ghale==1){
-        printf("x : %d   y: %d\n",Map[i].x,Map[i].y);
-    }
-}
+        for(int i=0;i<count;++i){
+            if(Map[i].is_ghale==1){
+                printf("x : %d   y: %d\n",Map[i].x,Map[i].y);
+            }
+        }
         game(count,Map,attSol,7,9,xy);
     }
 
