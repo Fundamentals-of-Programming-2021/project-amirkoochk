@@ -471,6 +471,121 @@ void specific_ghale(int n,int m,int xy[][m],int count,struct map Map[],struct at
 void specific_map(int n,int m,int xy[][m],int ch,int count,struct map Map[],struct att_sol attSol[]){
     specific_ghale(7,9,xy,count,Map,attSol,ch);
 }/// :|
+void test_map_ghale(int x[],int y[]){
+    x[0]=3;
+    y[0]=0;
+    x[1]=6;
+    y[1]=0;
+    x[2]=1;
+    y[2]=1;
+    x[3]=7;
+    y[3]=1;
+    x[4]=0;
+    y[4]=2;
+    x[5]=8;
+    y[5]=2;
+    x[6]=3;
+    y[6]=3;
+    x[7]=6;
+    y[7]=3;
+    x[8]=2;
+    y[8]=4;
+    x[9]=7;
+    y[9]=4;
+    x[10]=5;
+    y[10]=5;
+}
+void testing_map(int count,struct map Map[],struct  att_sol attSol[],int xy[][9]) {
+    int kingx[11];
+    int kingy[11];
+    int k = 0;
+   test_map_ghale(kingx, kingy);
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 9; ++j) {
+            if (xy[i][j] != 0) {
+                Map[k].x = (j * 80) + 120;
+                Map[k].y = (i * 80) + 120;
+                attSol[k].spell_type = 0;
+                attSol[k].power = 1;
+                attSol[k].speed = 1;
+                attSol[k].att = 1;
+                if(i==kingy[0] && j==kingx[0]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+               else if(i==kingy[1] && j==kingx[1]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+              else if(i==kingy[2] && j==kingx[2]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[3] && j==kingx[3]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[4] && j==kingx[4]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[5] && j==kingx[5]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[6] && j==kingx[6]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[7] && j==kingx[7]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[8] && j==kingx[8]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[9] && j==kingx[9]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFF0054FF;//// red
+                    Map[k].color2= 0xFF0000B8;
+                }
+                else if(i==kingy[10] && j==kingx[10]){
+                    Map[k].is_ghale = 1;
+                    Map[k].tedad_sol=10;
+                    Map[k].color1= 0xFFFF09E1;/// blue
+                    Map[k].color2= 0xFF079191;
+                }
+                else{
+                    Map[k].is_ghale = 0;
+                    Map[k].tedad_sol=0;
+                    Map[k].color1= 0xFF998877;//// toosi
+                    Map[k].color2= 0xFF000000;
+                }
+                k++;
+            }
+        }
+    }
+}
 void barkhord(struct map Map[],int *size,int sol[],int x[],int y[],int is,int *sizeb,int solb[],int xb[],int yb[],int isb){
     int cntrl=0;
     for(int i=0;i<*size;++i){
@@ -1403,13 +1518,18 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
         }
     }/// daryaft random mokhtasat yek bot hamrang .
     void bots_gate(int c, struct map Map[], struct att_sol attSol[], int ran, int *mahv, int *kk, int *is, Uint32 *color,
-            int xspell, int yspell) {
+            int xspell, int yspell,int ted_bot) {
         srand(time(0));
-        bot_coordinate(rand() % 2, 0xFFFF09E1, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); /// blue ,
-        bot_coordinate(rand() % 2, 0xFF00FF00, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); ///green
-        bot_coordinate(rand() % 2, 0xFF00FFFF, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); ///yellow
+        if(ted_bot==1){
+            bot_coordinate(rand() % 2, 0xFFFF09E1, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); /// blue ,
+        }
+        else{
+            bot_coordinate(rand() % 2, 0xFFFF09E1, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); /// blue ,
+            bot_coordinate(rand() % 2, 0xFF00FF00, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); ///green
+            bot_coordinate(rand() % 2, 0xFF00FFFF, c, Map, attSol, ran, mahv, kk, is, color, xspell, yspell); ///yellow
+        }
     }/// mahal inke aya bot mitavanad hamle konad 1 ya na 0.
-    void game(int count, struct map Map[], struct att_sol attSol[], int n, int m, int randomxy[][m]) {
+    void game(int count, struct map Map[], struct att_sol attSol[], int n, int m, int randomxy[][m],int ted_bot) {
        char cmnd;
         int xs, ys, xd, yd;
         int xm1, ym1;
@@ -1482,7 +1602,7 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
                 }
             }
             if(bots_time>=bt_target){
-                bots_gate(count,Map,attSol,ran,&mahv,&key2,&isb,&color_ghale_spell_bot,X,Y);
+                bots_gate(count,Map,attSol,ran,&mahv,&key2,&isb,&color_ghale_spell_bot,X,Y,ted_bot);
                 bots_time=0;
             }
             SDL_RenderPresent(sdlrenderer);
@@ -1551,7 +1671,6 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
             if (choice == 1) {
                 srand(time(0));
                 int count = 0;
-                SDL_bool shallExit = SDL_FALSE;
                 int randomxy[7][9];
                 srand(time(0));
                 int n = 7, m = 9;
@@ -1568,7 +1687,7 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
                 struct att_sol attSol[count];
                 random_map_pieces(7, 9, randomxy, count, Map, attSol);
                 color_of_map(count, Map);
-                game(count, Map, attSol, 7, 9, randomxy);
+                game(count, Map, attSol, 7, 9, randomxy,3);
             }
             else if (choice == 2) {
                 int ch = 0;
@@ -1616,15 +1735,25 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
                 struct att_sol attSol[count];
                 specific_map(7, 9, xy, ch, count, Map, attSol);
                 color_of_map(count, Map);
-                for (int i = 0; i < count; ++i) {
-                    if (Map[i].is_ghale == 1) {
-                        printf("x : %d   y: %d\n", Map[i].x, Map[i].y);
-                    }
-                }
-                game(count, Map, attSol, 7, 9, xy);
+                game(count, Map, attSol, 7, 9, xy,3);
             }
             else if (choice == 3) {
-
+                int count=0;
+                int xy[7][9];
+                for(int i=0;i<7;++i){
+                    for(int j=0;j<9;++j){
+                        if(i % 3 + j % 4 != 0 && i % 3 + j % 4 != 1){
+                            xy[i][j]=1;
+                            count++;
+                        }else{
+                            xy[i][j]=0;
+                        }
+                    }
+                }
+               struct map Map[count];
+                struct att_sol attSol[count];
+                testing_map(count,Map,attSol,xy);
+                game(count,Map,attSol,7,9,xy,1);
             }
             else if (choice == 4) {
                 take_from_file();
