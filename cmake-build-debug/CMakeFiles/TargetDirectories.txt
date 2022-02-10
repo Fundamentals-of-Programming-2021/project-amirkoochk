@@ -1,0 +1,3 @@
+C:/Users/AMIRHOSSEIN/Desktop/koochak/cmake-build-debug/CMakeFiles/koochak.dir
+C:/Users/AMIRHOSSEIN/Desktop/koochak/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/AMIRHOSSEIN/Desktop/koochak/cmake-build-debug/CMakeFiles/rebuild_cache.dir
