@@ -28,6 +28,7 @@ extern int zaman;
 extern int time1;
 extern int target_time;
 extern int index_spell;
+extern Uint32 scolor;
 struct map{
     int x;
     int y;

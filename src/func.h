@@ -54,8 +54,9 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
 ///3 array e az sarbaz ha ke meghdar on be andaze index ast va faghat moghe ke 0 shavad mojaz be harekat ast .
 ///4 in kar mojeb fasele bein sarbaz ha shode va dar for dar har bar render kardan x y har sarbaz taghir mikond be andaze sorat sarbaz.
 void majoon_atri(struct spell majoon[],int ran);/// dadan rang be spell va rahnama on ke dar struct spell ast .
+int control(int c,struct map Map[],int index);/// check mikonad agar hadeaghal 6 ghale az yek rang bod hadaf faghat rangi mishavad.
 void random_spell_xy(int *x,int *y,int n,int m,int xy[][m],int c,struct map Map[]);/// toolid konande x , y spell .[ mitavanad ro ghale haye rangi bioftad]
-int des_coordinate(int index,int c,struct map Map[],struct att_sol attSol[]);/// mokhtasat x y maghsad bot ra midahad . 0 1 40% bara toosi va 2 3 4 60% bara rangi hamle mikonad.
+int des_coordinate(int index,int c,struct map Map[],struct att_sol attSol[],int xspell,int yspell);/// mokhtasat x y maghsad bot ra midahad . 0 1 40% bara toosi va 2 3 4 60% bara rangi hamle mikonad.
 void bot_rendering_2(int count,struct map Map[],int ran,struct att_sol attSol[],int *mahv,int *kk,int is,int id,int Is,
                      Uint32 *colort,int xspell,int yspell,int Xs,int Ys,int index,int sol_bot[],int xb[],int yb[],struct spell majoon[]);
 ///1 render kardan harekat sarbaz haye bot va karbar (red) .

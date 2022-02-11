@@ -18,7 +18,7 @@ const int FPS = 60;
 const int tool=1000;
 const int arz =720;
 char player1_name[20];//red
-int score;
+int score=0;
 SDL_Window *sdlWindow;
 SDL_Renderer *sdlrenderer ;
 int choice=0;
@@ -26,6 +26,7 @@ int zaman=0;
 int time1=0;
 int target_time;
 int index_spell;
+Uint32 scolor;
 
 struct map{
     int x;

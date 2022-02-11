@@ -283,7 +283,6 @@ void barkhord(struct map Map[],int *size,int sol[],int x[],int y[],int is,int *s
     int cntrl=0;
     for(int i=0;i<*size;++i){
         for(int j=0;j<*sizeb;++j){
-            if(sol[i]==0 && solb[j]==0){
                 if(x[i]==xb[j] && y[i]==yb[j]){
                     int k=min(*size-i,*sizeb-j);
                     *size=*size-k;
@@ -293,7 +292,6 @@ void barkhord(struct map Map[],int *size,int sol[],int x[],int y[],int is,int *s
                     cntrl=1;
                     break;
                 }
-            }
         }
         if(cntrl==1){
             break;
@@ -374,9 +372,9 @@ void amount_of_soliders(int i,int j,struct map Map[],struct att_sol attSol[]) {
     }
 }/// ta'en meghdar sarbaz ha dar asar hamle .index i mohajem .index j modafe .
 void changing_attribute1(int c,struct map Map[],struct att_sol attSol[],int index,int s) {
-    Uint32 tcolor=Map[index].color1;
+
     for(int i=0;i<c;++i){
-        if(Map[i].color1==tcolor){
+        if(Map[i].color1==scolor){
             attSol[i].speed=s;
         }
     }
@@ -397,35 +395,26 @@ void changing_attribute23(int c,struct map Map[],struct att_sol attSol[],int ind
     else if(temp==2){
         ran=1.0;
     }
-    Uint32 tcolor=Map[index].color1;
+
     for(int i=0;i<c;++i){
-        if(tcolor==Map[i].color1){
+        if(scolor==Map[i].color1){
             attSol[i].power=ran;
         }
     }
 } /// taghir ghodrat sarbaz ha be 2 ya 0.5 . -1 baraye inke mohajem be tedad sarbaz haye modafe ezafe konad.
 void changing_attribute4(int c,struct map Map[],struct att_sol attSol[],int index,int bool) {
-    Uint32 tcolor=Map[index].color1;
     for(int i=0;i<c;++i){
-        if(tcolor==Map[i].color1){
+        if(scolor==Map[i].color1){
             attSol[i].att=bool;
         }
     }
 }/// az dast raftan ghodrat hamle.
 void rest_attri(int c,struct map Map[],struct att_sol attSol[],int index,int ran) {
-    if(ran==1) {
-        changing_attribute1(c, Map, attSol, index, 1);
-    }
-    else if(ran==2) {
-        changing_attribute23(c, Map, attSol, index, 2);
-
-    }
-    else if(ran==3) {
-        changing_attribute23(c, Map, attSol, index, 2);
-    }
-    else if(ran==4) {
-        changing_attribute4(c, Map, attSol, index, 1);
-    }
+for(int i=0;i<c;++i){
+    attSol[i].speed=1;
+    attSol[i].power=1.0;
+    attSol[i].att=1;
+}
 } /// az bein bordan khasiat spell bar asas adad ran ke 1 2 3 4 ast ke adad har spell ast.
 void wich_spell(int c,struct map Map[],struct att_sol attSol[],int index,int ran) {
     if(ran==1) {
@@ -519,13 +508,13 @@ void moving_mouse_soliders_2(int count,struct map Map[],int xs,int ys,struct att
             }
             k = 0;
         }
-        /*if (timer == 60) {
+        if (timer == 90) {
             for (int i = 0; i < count; ++i) {
                 if (i!=is && i!=id && i!=Is && i!=Id && Map[i].tedad_sol<100 && Map[i].is_ghale==1)
                     Map[i].tedad_sol++;
             }
             timer = 0;
-        }*/
+        }
         SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(sdlrenderer);
         SDL_RenderCopy(sdlrenderer, sdlTexture, NULL, &texture_rect);
@@ -537,18 +526,19 @@ void moving_mouse_soliders_2(int count,struct map Map[],int xs,int ys,struct att
             sprintf(c, "%d", Map[i].tedad_sol);
             stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
         }
-   /*     if(zaman==0 && *mahv ==1 && time1>=target_time){
+        if(zaman==0 && *mahv ==1 && time1>=target_time){
             stringColor(sdlrenderer, 400, 40, majoon[0].string, 0xFF000000);
             filledEllipseColor(sdlrenderer, X, Y, 30, 20, majoon[0].color);
             stringColor(sdlrenderer, X - 25, Y, "spell", 0xFF000000);
             ellipseColor(sdlrenderer, X, Y, 30, 20, majoon[0].color);
-        }*/
+        }
         for (int j = 0; j < size2; ++j) {
             filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
             if (sol[j] == 0) {
                 if (tedad == 0 && x[j] == X && y[j] == Y && time1 >= target_time && zaman==0) {
                     key3=1;
                     index_spell=Is;
+                    scolor=Map[Is].color1;
                     tedad++;
                 }
                 if (x[j] != Xd) {
@@ -573,6 +563,7 @@ void moving_mouse_soliders_2(int count,struct map Map[],int xs,int ys,struct att
                 if (tedad == 0 && x1[j] ==X  && y1[j] ==Y  && time1 >= target_time && zaman==0) {
                     key4=1;
                     index_spell=is;
+                    scolor=Map[is].color1;
                     tedad++;
                 }
                 if (x1[j] != Map[id].x) {
@@ -678,13 +669,13 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
             }
             k = 0;
         }
-          /* if (timer == 60) {
+           if (timer == 90) {
                for (int i = 0; i < count; ++i) {
                    if (i!=is && i!=id && Map[i].tedad_sol<100 && Map[i].is_ghale==1)
                        Map[i].tedad_sol++;
                }
                timer = 0;
-           }*/
+           }
         SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(sdlrenderer);
         SDL_RenderCopy(sdlrenderer, sdlTexture, NULL, &texture_rect);
@@ -696,12 +687,12 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
             sprintf(c, "%d", Map[i].tedad_sol);
             stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
         }
-      /*  if(zaman==0 && *mahv ==1&& time1>=target_time){
+        if(zaman==0 && *mahv ==1&& time1>=target_time){
             stringColor(sdlrenderer, 400, 40, majoon[0].string, 0xFF000000);
             filledEllipseColor(sdlrenderer, X, Y, 30, 20, majoon[0].color);
             stringColor(sdlrenderer, X - 25, Y, "spell", 0xFF000000);
             ellipseColor(sdlrenderer, X, Y, 30, 20, majoon[0].color);
-        }*/
+        }
         int j;
         for (j = 0;j <size;++j) {
             filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
@@ -723,6 +714,7 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
                 if (tedad == 0 && x[j] == X && y[j] == Y && time1 >= target_time && zaman==0) {
                     key3 = 1;
                     index_spell=is;
+                    scolor=Map[is].color1;
                     tedad++;
                 }
                 if (x[j] != xd) {
@@ -756,7 +748,9 @@ void moving_mouse_soliders(int count,struct map Map[],int xm1,int ym1,int xm2,in
             }
             amount_of_soliders(is, id, Map, attSol);
         }
-
+         if(size==0){
+             break;
+         }
         if (*kk == 1 && index_spell==is) {
             wich_spell(count, Map, attSol, is, ran);
         }
@@ -794,26 +788,54 @@ void majoon_atri(struct spell majoon[],int ran) {
         majoon[0].color=0xFF004600;
     }
 }/// dadan rang be spell va rahnama on ke dar struct spell ast .
-
+int control(int c,struct map Map[],int index) {
+   int count=0;
+    for(int i=0;i<c;++i){
+    if(Map[i].color1==Map[index].color1 ){
+      count++;
+    }
+    }
+    return count;
+}/// check mikonad agar hadeaghal 6 ghale az yek rang bod hadaf faghat rangi mishavad.
 void random_spell_xy(int *x,int *y,int n,int m,int xy[][m],int c,struct map Map[]) {
     srand(time(0));
     int ran=rand()%c;
     *x= Map[ran].x;
     *y=Map[ran].y;
 }/// toolid konande x , y spell .[ mitavanad ro ghale haye rangi bioftad]
-int des_coordinate(int index,int c,struct map Map[],struct att_sol attSol[]) {
-    int karan[4]={0,10,20,30};
-    srand(time(0));
-    int random=rand()%5;///0 1 -->toosi       2 3 4 --> Rangi
-    for(int i=karan[rand()%4];i<c;++i){
-        if(random==0||random==1){
-            if(Map[i].color1==0xFF998877 && Map[i].tedad_sol<=Map[index].tedad_sol){
+int des_coordinate(int index,int c,struct map Map[],struct att_sol attSol[],int xspell,int yspell) {
+    if(time1>40 && zaman==0){
+        for(int i=0;i<c;++i){
+            if(Map[i].x==xspell && Map[i].y==yspell){
                 return i;
+                zaman=1;
             }
         }
-        else{
-            if(Map[i].color1!=Map[index].color1 && Map[i].tedad_sol<=Map[index].tedad_sol && Map[i].color1!=0xFF998877){
-                return i;
+    }
+    else {
+        if (control(c, Map,index)>=6) {
+            srand(time(0));
+            int randm=rand()%5;
+         for(int i=0;i<c;++i){
+             if((Map[i].color1==0xFF0054FF && randm<=2) || (Map[i].color1 !=Map[index].color1 && Map[i].color1!=0xFF998877 && randm>2)){
+                 return i;
+             }
+         }
+        } else {
+            int karan[4] = {0, 10, 20, 30};
+            srand(time(0));
+            int random = rand() % 5;///0 1 -->toosi       2 3 4 --> Rangi
+            for (int i = karan[rand() % 4]; i < c; ++i) {
+                if (random == 0 || random == 1) {
+                    if (Map[i].color1 == 0xFF998877 && Map[i].tedad_sol <= Map[index].tedad_sol) {
+                        return i;
+                    }
+                } else {
+                    if (Map[i].color1 != Map[index].color1 && Map[i].tedad_sol <= Map[index].tedad_sol &&
+                        Map[i].color1 != 0xFF998877) {
+                        return i;
+                    }
+                }
             }
         }
     }
@@ -869,13 +891,13 @@ void bot_rendering_2(int count,struct map Map[],int ran,struct att_sol attSol[],
             }
             k = 0;
         }
-       /* if (timer == 60) {
+        if (timer == 90) {
             for (int i = 0; i < count; ++i) {
                 if (i!=is && i!=id && i!=Is && i!=Id && Map[i].tedad_sol<100 && Map[i].is_ghale==1)
                     Map[i].tedad_sol++;
             }
             timer = 0;
-        }*/
+        }
         SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(sdlrenderer);
         SDL_RenderCopy(sdlrenderer, sdlTexture, NULL, &texture_rect);
@@ -887,18 +909,20 @@ void bot_rendering_2(int count,struct map Map[],int ran,struct att_sol attSol[],
             sprintf(c, "%d", Map[i].tedad_sol);
             stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
         }
-        /*if(zaman==0 && *mahv ==1 && time1>=target_time ){
+        if(zaman==0 && *mahv ==1 && time1>=target_time ){
             stringColor(sdlrenderer, 400, 40, majoon[0].string, 0xFF000000);
             filledEllipseColor(sdlrenderer, xspell, yspell, 30, 20, majoon[0].color);
             stringColor(sdlrenderer, xspell - 25, yspell, "spell", 0xFF000000);
             ellipseColor(sdlrenderer, xspell, yspell, 30, 20, majoon[0].color);
-        }*/
+        }
         for (j = 0; j < sizek; ++j) {
             filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
             if (sol[j] == 0 && ted == 0) {
                 if (tedad == 0 && x[j] == xspell && y[j] == yspell && time1 >= target_time && zaman==0) {
                     key3 = 1;
                     index_spell=Is;
+                    scolor=Map[Is].color1;
+                    zaman=1;
                     tedad++;
                 }
                 if (x[j] != xd) {
@@ -923,7 +947,9 @@ void bot_rendering_2(int count,struct map Map[],int ran,struct att_sol attSol[],
                 if (tedad == 0 && xb[t] == xspell && yb[t] == yspell && time1 >= target_time && zaman==0) {
                     key4 = 1;
                     index_spell=is;
+                    scolor=Map[is].color1;
                     tedad++;
+                    zaman=1;
                 }
                 if (xb[t] != xbd) {
                     if (xb[t] > xbd) {
@@ -1008,7 +1034,7 @@ void bot_rendering_2(int count,struct map Map[],int ran,struct att_sol attSol[],
 ///5 payan func ba residan hardo bot va karbar be maghsad ya mahv kamel shodan .
 void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol attSol[], int ran, int *mahv,
                    int *kk,Uint32 *colort, int xspell, int yspell,struct spell majoon[]) {
-    int id = des_coordinate(is, c, Map, attSol);
+    int id = des_coordinate(is, c, Map, attSol,xspell,yspell);
     if (id == -1) {
         return;
     }
@@ -1023,6 +1049,7 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
     int att_time = 0, timer=0;
     int j = 0,k=0;
     int Is;
+    int ted=0;
     int Xs, Ys;
     int sizeb=Map[is].tedad_sol;
     for (int l = 0; l < sizeb; ++l) {
@@ -1034,7 +1061,6 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
     SDL_Rect texture_rect ={.x=0, .y=0, .w=tool, .h=arz};
 
     while (shallexit == SDL_TRUE) {
-        printf("*\n");
         if (att_time == 15) {
             for (int j = 0; j < sizeb; ++j) {
                 if (sol[j] != 0)
@@ -1042,13 +1068,13 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
             }
             att_time = 0;
         }
-      /*  if (timer == 60) {
+        if (timer == 90) {
             for (int i = 0; i < c; ++i) {
                 if (i!=is && i!=id && Map[i].tedad_sol<100 && Map[i].is_ghale==1)
                     Map[i].tedad_sol++;
             }
             timer = 0;
-        }*/
+        }
         SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(sdlrenderer);
         SDL_RenderCopy(sdlrenderer, sdlTexture, NULL, &texture_rect);
@@ -1061,12 +1087,12 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
             sprintf(c, "%d", Map[i].tedad_sol);
             stringColor(sdlrenderer, Map[i].x, Map[i].y - 10, c, 0xFF000000);
         }
-             /*  if(zaman==0 && *mahv ==1 && time1>=target_time){
+               if(zaman==0 && *mahv ==1 && time1>=target_time){
                    stringColor(sdlrenderer, 400, 40, majoon[0].string, 0xFF000000);
                    filledEllipseColor(sdlrenderer, xspell, yspell, 30, 20, majoon[0].color);
                    stringColor(sdlrenderer, xspell - 25, yspell, "spell", 0xFF000000);
                    ellipseColor(sdlrenderer, xspell, yspell, 30, 20, majoon[0].color);
-               }*/
+               }
         for (j = 0; j < sizeb; ++j) {
             filledCircleColor(sdlrenderer, x[j], y[j], 5, 0xFF000000);
             if (sol[j] == 0) {
@@ -1085,8 +1111,10 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
 
                 if (tedad == 0 && x[j] == xspell && y[j] == yspell && time1 >= target_time && zaman==0) {
                     index_spell=is;
+                    scolor=Map[is].color1;
                     key3 = 1;
                     tedad++;
+                    zaman=1;
                 }
                 if (x[j] != xd) {
                     if (x[j] > xd) {
@@ -1107,10 +1135,9 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
         if(k==1){
             break;
         }
-        printf("x: %d y:%d\n",x[sizeb-1],y[sizeb-1]);
-        if (x[sizeb - 1] == xd && y[sizeb - 1] == yd) {
-            printf("omad inja  >>>>\n");
+        if (ted==0 && x[sizeb - 1] == xd && y[sizeb - 1] == yd) {
             shallexit1 =1;
+            ted=1;
             x[sizeb - 1] = xd;
             y[sizeb - 1] = yd;
             amount_of_soliders(is, id, Map, attSol);
@@ -1121,7 +1148,11 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
                 change_spell_type(c, Map, attSol, index_spell, ran);
             }
         }
-        if(x[sizeb-1]==0 && y[sizeb-1]==0){
+        if (ted==1) {
+            x[sizeb - 1] = xd;
+            y[sizeb-1] = yd;
+        }
+        if( sizeb==0){
             break;
         }
         if (*kk == 1 && index_spell==is) {
@@ -1132,7 +1163,7 @@ void bot_rendering(int X, int Y, int is, int c, struct map Map[], struct att_sol
         att_time++;
         timer++;
         if (shallexit1==1) {
-            printf("***************************************\n");
+            amount_of_soliders(is, id, Map, attSol);
             shallexit = SDL_FALSE;
             break;
         }
@@ -1201,7 +1232,7 @@ void game(int count, struct map Map[], struct att_sol attSol[], int n, int m, in
     SDL_Event sdlEvent;
     int X, Y;
     random_spell_xy(&X, &Y, 7, 9, randomxy, count, Map);
-    int ran =rand() % 4;
+    int ran =rand() % 4;///noE majoon
     ran++;
     struct spell majoon[1];
     majoon_atri(majoon,ran);
@@ -1209,7 +1240,7 @@ void game(int count, struct map Map[], struct att_sol attSol[], int n, int m, in
     SDL_Texture *sdlTexture = menuTexture(sdlrenderer, "../pixel.bmp");
     SDL_Rect texture_rect = {.x=0, .y=0, .w=tool, .h=arz};
     while (shallExit == SDL_FALSE) {
-        printf("t:%d & z:%d  &r:%d\n", time1, zaman, ran);
+      //  printf("t:%d & z:%d  &r:%d\n", time1, zaman, ran);
         SDL_SetRenderDrawColor(sdlrenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(sdlrenderer);
         SDL_RenderCopy(sdlrenderer, sdlTexture, NULL, &texture_rect);
@@ -1219,6 +1250,7 @@ void game(int count, struct map Map[], struct att_sol attSol[], int n, int m, in
             key2 = 0;
             zaman = 0;
             time1 = 0;
+            scolor=0xFF000000;
             target_time =rand()%8+9;
             change_spell_type(count, Map, attSol, index_spell, 0);
             color_ghale_spell = 0xFF000000;
@@ -1231,6 +1263,7 @@ void game(int count, struct map Map[], struct att_sol attSol[], int n, int m, in
         }  ///Handling The Time Of Each Spell.
 
         if (zaman > 0 && zaman < 30) {
+            wich_spell(count,Map,attSol,index_spell,ran);
             change_spell_type(count, Map, attSol, index_spell, ran);
         }
 

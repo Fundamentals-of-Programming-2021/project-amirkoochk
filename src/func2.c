@@ -100,14 +100,12 @@ void show_leaderboard(struct fdata *head,int count) {
             }
         }
         if(cmnd=='m'){
-            save_in_file(head);
             free_the_list(head);
             shallExit = SDL_TRUE;
             break;
         }
     }
     SDL_Delay(1000);
-    printf("\n Hello World\n");
 }/// showing leaderboard va kelid 'm' baraye bargasht be menu va save kardan asami va scores .
 void is_player_rep(struct fdata *head,int count) {
     int cntrl = 0;
@@ -127,6 +125,7 @@ void is_player_rep(struct fdata *head,int count) {
         strcpy(ne->name,player1_name);
         cu->ptr=ne;
     }
+    save_in_file(head);
     show_leaderboard(head,count);
 }/// handle kardan esm tekrari va update kardan on dar sorat tekrar.
 void add_at_tail(struct fdata *head,char n[],int x) {
@@ -309,20 +308,22 @@ int choosing_the_map(int *ch) {
 }/// entekhab map moshakhas 3 ta map , event mouse baraye click
 void take_from_file() {
     int temps;
-    int count;
+    int count=0;
     char tempn[20];
     struct fdata *head=NULL;
-    head=(struct fdata *)malloc(sizeof(struct fdata));
     FILE *source;
     source=fopen("names&scores.txt","r");
-    fscanf(source, "%s",tempn);
-    strcpy(head->name,tempn);
-    fscanf(source," ");
-    fscanf(source,"%d",&temps);
-    head->score=temps;
-    fscanf(source," ");
-    head->ptr=NULL;
-    count++;
+    if(!feof(source)) {
+        head=(struct fdata *)malloc(sizeof(struct fdata));
+        fscanf(source, "%s", tempn);
+        strcpy(head->name, tempn);
+        fscanf(source, " ");
+        fscanf(source, "%d", &temps);
+        head->score = temps;
+        fscanf(source, " ");
+        head->ptr = NULL;
+        count++;
+    }
     while(!feof(source)){
         fscanf(source,"%s",tempn);
         fscanf(source," ");
@@ -354,6 +355,7 @@ int who_is_winner(int count,struct map Map[]) {
     return 0;
 }/// taeen inke ma (red) barande im ya bazande .
 void show_result(int x) {
+    int ted=0;
     SDL_bool shallExit = SDL_FALSE;
     char cmnd;
     while (shallExit == SDL_FALSE) {
@@ -362,12 +364,18 @@ void show_result(int x) {
         if(x==1){
             stringColor(sdlrenderer,400,300,"The winner is:",0xFF000000);
             stringColor(sdlrenderer,400,360,player1_name,0xFF000000);
-            score+=20;
+            if(ted==0) {
+                score += 20;
+            }
+            ted++;
         }
         else if(x==2){
             stringColor(sdlrenderer,400,300,player1_name,0xFF000000);
             stringColor(sdlrenderer,400,360,"unfortunately you lost ",0xFF000000);
-            score-=10;
+            if(ted==0) {
+                score -= 10;
+            }
+            ted++;
         }
         stringColor(sdlrenderer,350,200,"** baraye bargasht be menu m ra befesharid **",0xFF000000);
         SDL_RenderPresent(sdlrenderer);
